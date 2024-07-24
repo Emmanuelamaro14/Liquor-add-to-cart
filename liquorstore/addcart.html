@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Add to Cart</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+    font-family: Arial, sans-serif;
+}
+
+.product {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin: 10px;
+}
+
+#cart {
+    border: 1px solid #000;
+    padding: 10px;
+    margin: 10px;
+}
+
+.cart-item {
+    border-bottom: 1px solid #ccc;
+    padding: 5px 0;
+}
+
+    </style>
+</head>
+<body>
+    <h1>Product List</h1>
+    <div id="products">
+        <div class="product">
+            <h2>Product 1</h2>
+            <p>Price: $10</p>
+            <button class="add-to-cart" data-id="1" data-name="Chicken" data-price="130 PHP">Add to Cart</button>
+        </div>
+        <div class="product">
+            <h2>Product 2</h2>
+            <p>Price: $15</p>
+            <button class="add-to-cart" data-id="2" data-name="Buffalo" data-price="200 PHP">Add to Cart</button>
+        </div>
+        <!-- Add more products as needed -->
+    </div>
+    <h1>Cart</h1>
+    <div id="cart">
+        <p>No items in cart</p>
+    </div>
+    <script src="scripts.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+    const cart = [];
+    const products = document.getElementById('products');
+    const cartDisplay = document.getElementById('cart');
+
+    products.addEventListener('click', (e) => {
+        if (e.target.classList.contains('add-to-cart')) {
+            const productId = e.target.getAttribute('data-id');
+            const productName = e.target.getAttribute('data-name');
+            const productPrice = parseFloat(e.target.getAttribute('data-price'));
+
+            const existingProductIndex = cart.findIndex(product => product.id === productId);
+
+            if (existingProductIndex !== -1) {
+                cart[existingProductIndex].quantity += 1;
+            } else {
+                cart.push({
+                    id: productId,
+                    name: productName,
+                    price: productPrice,
+                    quantity: 1
+                });
+            }
+
+            updateCartDisplay();
+        }
+    });
+
+    function updateCartDisplay() {
+        cartDisplay.innerHTML = '';
+
+        if (cart.length === 0) {
+            cartDisplay.innerHTML = '<p>No items in cart</p>';
+        } else {
+            cart.forEach(product => {
+                const cartItem = document.createElement('div');
+                cartItem.className = 'cart-item';
+                cartItem.innerHTML = `
+                    <p>${product.name} - $${product.price} x ${product.quantity}</p>
+                `;
+                cartDisplay.appendChild(cartItem);
+            });
+
+            const totalPrice = cart.reduce((total, product) => total + product.price * product.quantity, 0);
+            const totalDisplay = document.createElement('div');
+            totalDisplay.className = 'cart-total';
+            totalDisplay.innerHTML = `<p>Total: $${totalPrice.toFixed(2)}</p>`;
+            cartDisplay.appendChild(totalDisplay);
+        }
+    }
+});
+
+    </script>
+</body>
+</html>
